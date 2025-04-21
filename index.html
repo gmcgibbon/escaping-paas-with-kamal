@@ -1,0 +1,909 @@
+ <!DOCTYPE html>
+<html>
+  <head>
+    <title>Escaping PaaS with Kamal</title>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@5.1.0/dist/reset.css">
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@5.1.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@5.1.0/dist/theme/night.css">
+    <link rel="stylesheet" href="https://unpkg.com/highlight.js@11.10.0/styles/github-dark.css">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script type="importmap">
+      {
+        "imports": {
+          "mermaid": "https://unpkg.com/mermaid@11.4.1/dist/mermaid.esm.min.mjs",
+          "reveal.js": "https://unpkg.com/reveal.js@5.1.0/dist/reveal.esm.js",
+          "reveal.js-mermaid-plugin": "./mermaid-plugin.js",
+          "reveal.js-laser-pointer-plugin": "./laser-pointer-plugin.js",
+          "reveal.js-markdown-plugin": "https://unpkg.com/reveal.js@5.1.0/plugin/markdown/markdown.esm.js",
+          "reveal.js-highlight-plugin": "https://unpkg.com/reveal.js@5.1.0/plugin/highlight/highlight.esm.js",
+          "reveal.js-notes-plugin": "https://unpkg.com/reveal.js@5.1.0/plugin/notes/notes.esm.js"
+        }
+      }
+    </script>
+  </head>
+  <style>
+    svg {
+      max-width: none !important;
+      line-height: 150%;
+      -webkit-text-stroke-width: 0.01px;
+    }
+
+    h2 {
+      margin-bottom: 50px !important;
+    }
+
+    img[alt="Gannon"] {
+      width: 40%;
+      float: left;
+    }
+
+    img[alt="My Website"] {
+      width: 80%;
+    }
+
+    img[alt="Heroku"] {
+      width: 40%;
+    }
+
+    img[alt="Redis"] {
+      width: 45%;
+    }
+
+    img[alt="Bugsnag"] {
+      width: 45%;
+    }
+
+    img[alt="Penguin"] {
+      width: 40%;
+    }
+
+    img[alt="Maintenance Email"] {
+      width: 60%;
+    }
+
+    img[alt="Digital Ocean"] {
+      width: 40%;
+    }
+
+    img[alt="VPS Security Post"] {
+      width: 80%;
+    }
+
+    img[alt="Deploy"] {
+      width: 65%;
+    }
+
+    img[alt="Kamal"] {
+      width: 70%;
+    }
+  </style>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section data-markdown>
+          <textarea data-template>
+            # Escaping PaaS with Kamal
+
+            #### [Gannon McGibbon](https://gannon.io/)
+
+            Note:
+            - For WRUG April 2025
+            ---
+            ## 👋 Hi, I'm Gannon
+
+            ![Gannon](images/me.jpg)
+
+            - Works at Shopify
+            - Committer on Ruby on Rails
+            - Organizes Winnipeg.rb
+
+            Note:
+            - Intro
+            ---
+            ## Who here has a website?
+
+            # 🙋‍♂️
+            ---
+            ## Is it a server-side web application?
+
+            # 🙋‍♀️
+            ---
+            ## Does anyone deploy web apps at work?
+
+            # 🙋
+            ---
+            ## I have a website
+
+            # 👨‍💻
+
+            Note:
+            - I have a website
+            - It is hosted on Heroku
+            - I pay for that, monthly
+            ---
+            ## Heroku is a PaaS
+
+            ```sh
+            > heroku git:remote -a my-app
+            > git push heroku main
+            > ✅
+            ```
+
+            Note:
+            - Heroku is a Platform as a Service (PaaS)
+            - You add a git origin and push
+            - Your app is deployed. Very simple
+            ---
+            ## This is my Blog
+
+            ![My Website](images/blog.png)
+
+            Note:
+            - It showcases my talks and blog posts
+            - I could use a static site, but I don't want to
+            - I love using Rails too much
+            ---
+            ## This is my Blog
+
+            ![My Website](images/blog.png)
+
+            Note:
+            - I also love finding bugs
+            - A big reason I maintain this app is to find bugs
+            - I've found 1 in Ruby and several in Rails
+            ---
+            ## I ❤️ Heroku
+
+            ![Heroku](images/heroku.svg)
+
+            Note:
+            - I also love Heroku
+            - It is probably the best
+            - Maybe oldest PaaS service out there
+            ---
+            ## Convenience
+
+            ![Heroku](images/heroku.svg)
+
+            Note:
+            - The biggest strength of Heroku
+            - And other PaaS providers like it
+            - is convenience
+            ---
+            ## Convenience
+
+            ![Dynos](images/dynos.png)
+
+            Note:
+            - Servers are abstracted away into dynos
+            - If you need more servers, buy more dynos
+            - If you need better servers, buy beefier dynos
+            ---
+            ## Convenience
+
+            ![Redis](images/add-on-redis.png)
+
+            Note:
+            - Services are packaged into composible add-ons
+            - Need Redis? No problem
+            - Just select a tier
+            ---
+            ## Convenience
+
+            ![Bugsnag](images/add-on-bugsnag.png)
+
+            Note:
+            - How about bug tracking? They've got that too
+            - Most of the time, it just works
+            - Provisioning is quck, and you client libraries do the rest
+            ---
+            ## Convenience
+
+            ![Penguin](images/penguin.svg)
+
+            Note:
+            - Server administration is completely gone
+            - You don't know what os you are using
+            - You don't need to worry about security patches
+            ---
+            ## Convenience
+
+            ![Maintenance Email](images/maintenance-email.png)
+
+            Note:
+            - If they need to update something critical to your app
+            - They'll let you know
+            - Most of the time they can do this for you
+            ---
+            ## Convenience
+
+            ![Deploy](images/deploy.png)
+
+            Note:
+            - Deploys are so easy
+            - You can deploy by simply pushing a branch to git
+            - Or via docker using a container command
+            ---
+            ## Rails World 2024
+
+            ![Rails World](images/rails-world.png)
+
+            Note:
+            - Last year, during Rails World
+            - DHH brought up PaaS
+            - And talked about the companies behind these services
+            - And what they want you to think
+            ---
+            ## Rails World 2024
+
+            ![Confused](images/confused.jpg)
+
+            Note:
+            - They want you to think managing servers is hard
+            - They want you to be scared of hackers
+            - They want you to think you can't do it yourself
+            ---
+            ## Rails World 2024
+
+            ![Rails World Talk QR](images/rails-world-talk-qr.png)
+
+            Note:
+            - It is an excellent talk
+            - You should watch it
+            - I've been thinking about this for a few months
+            - I've also been looking at my server bills
+            ---
+            ## Cost effectiveness
+
+            # 💲
+
+            Note:
+            - The clearest drawback to PaaS by far
+            - Is cost effectiveness
+            ---
+            ## Cost effectiveness
+
+            - I pay $7USD per month for 1 worker dyno
+            - That's $84USD per year
+            - That's ~$125CAD per year
+
+            Note:
+            - I pay 7 USD per month per dyno
+            - That's $84 USD per year
+            - Using my bank's current conversion rate
+            - That's roughly $125CAD per year
+            ---
+            ## Cost effectiveness
+
+            - I pay $7USD per month for 1 worker dyno
+            - That's $84USD per year
+            - That's ~$125CAD per year
+
+            Note:
+            - That's not a lot
+            - But what if I need to host another app?
+            - This came up just last year
+            - $125 per app per year + services + domains
+            ---
+            ## Cost effectiveness
+
+            # ⚒️
+
+            Note:
+            - I tried hosting multiple apps on a single dyno
+            - It didn't end well
+            - Memory pressure was a bit high
+            - You're fighting against the system
+            ---
+            ## Virtual Private Servers
+
+            ![Digital Ocean](images/digital-ocean.svg)
+
+            Note:
+            - Many of you know of a Virtual Private Server (VPS)
+            - A virtualized server on a rack somewhere
+            - Much better value, renting raw compute
+            ---
+            ## Virtual Private Servers
+
+            - $4USD per month for 1 VPS server
+            - That's $48USD per year
+            - That's $70CAD per year
+
+            Note:
+            - Because you're not paying for software
+            - The cheapest VPS from DO costs $4USD per month
+            - It has more compute than heroku's basic dynos
+            ---
+            ## Virtual Private Servers
+
+            - $4USD per month for 1 VPS server
+            - That's $48USD per year
+            - That's $70CAD per year
+
+            Note:
+            - This a much better price
+            - And more scale-friendly
+            - You can deploy multiple apps on VPS
+            ---
+            ## The Problem
+
+            # 💸
+
+            Note:
+            - So, I can save money by switching to VPS
+            - But how do we deploy to a VPS?
+            - And how do we serve our app with a VPS?
+            ---
+            ## The Problem
+
+            # 🚀
+
+            Note:
+            - With lower prices come unsolved problems
+            - There's many ways to deploy an app
+            - There's many ways to serve an app
+            ---
+            ## The Problem
+
+            # ❓
+
+            Note:
+            - So, how do we get the best of both?
+            - I want convient deployments
+            - And I don't want to overpay for compute
+            ---
+            ## Kamal
+
+            ![Kamal](images/kamal.webp)
+
+            Note:
+            - This is where Kamal comes in
+            - Kamal is basically an SSH deploy tool that uses Docker
+            - It offers the simplicity of a PaaS, on any server
+            ---
+            ## Kamal
+
+            ![Kamal Docs](images/kamal-docs.png)
+
+            Note:
+            - I'll be using Rails for reference
+            - But you can deploy any web app with Kamal
+            - To any Debian server reachable over SSH
+            ---
+            ## Kamal
+
+            ![Kamal Docs](images/kamal-docs.png)
+
+            Note:
+            - Rails 8 ships with Kamal, hence DHH's keynote
+            - For legacy apps, you need to wire it yourself
+            - But it isn't too hard
+            ---
+            ## My Blog
+
+            - Started on Rails 7, on edge
+            - Started on Ruby 3, on 3.4.2
+            - Runs a subset of Rails
+
+            Note:
+            - My app runs on Rails edge
+            - It uses Ruby 3.4.2
+            - Only uses a few Rails gems
+            - It doesn't load Active Record, Active Storage, etc.
+            ---
+            ## My Blog
+
+            # ❄️
+
+            Note:
+            - A bit of a unique setup
+            - Good for finding bugs, but a pain to upgrade
+            - We need to wire up Kamal ourselves
+            ---
+            ## Setup
+
+            ![VPS Security Post](images/vps-security.png)
+
+            Note:
+            - But before we do that, we should secure our server
+            - This blog post provides a few different ways
+            - However, the most important part is securing SSH
+            ---
+            ## Setup
+
+            ![VPS Security QR](images/vps-security-qr.png)
+
+            Note:
+            - Most VPS providers allow you to add an SSH key upon creation
+            - This sidesteps most of the problem
+            - But it still a good idea to do more
+            ---
+            ## Setup
+
+            ```sh
+            > sudo apt update; sudo apt upgrade -y
+            > sudo apt install ufw
+            > sudo apt install fail2ban
+            ```
+
+            Note:
+            - Things like keeping packages updated
+            - Using a firewall like ufw
+            - Using an IP banning tool like fail2ban
+            - For a hobby project, I'm not doing much more than this
+            ---
+            ## Setup
+
+            ```docker[]
+            ARG RUBY_VERSION=3.4.1
+            FROM docker.io/library/ruby:$RUBY_VERSION-slim
+            WORKDIR /rails
+            ENV RAILS_ENV="production" \
+                BUNDLE_DEPLOYMENT="1" \
+                BUNDLE_PATH="/usr/local/bundle" \
+                BUNDLE_WITHOUT="development"
+            COPY . .
+            COPY Gemfile Gemfile.lock ./
+            RUN bundle install && \
+                bundle exec bootsnap precompile --gemfile
+            RUN groupadd --system --gid 1000 rails && \
+                useradd rails --uid 1000 --gid 1000 \
+                --create-home --shell /bin/bash && \
+                chown -R rails:rails db log tmp
+            USER 1000:1000
+            EXPOSE 80
+            CMD ["./bin/thrust", "./bin/rails", "server"]
+            ```
+
+            Note:
+            - Now we can get into application setup
+            - We need to first add a dockerfile
+            - It is what kamal uses to build your app
+            - This is an shorter version of it
+            ---
+            ## Setup
+
+            ```docker[1-3]
+            ARG RUBY_VERSION=3.4.1
+            FROM docker.io/library/ruby:$RUBY_VERSION-slim
+            WORKDIR /rails
+            ENV RAILS_ENV="production" \
+                BUNDLE_DEPLOYMENT="1" \
+                BUNDLE_PATH="/usr/local/bundle" \
+                BUNDLE_WITHOUT="development"
+            COPY . .
+            COPY Gemfile Gemfile.lock ./
+            RUN bundle install && \
+                bundle exec bootsnap precompile --gemfile
+            RUN groupadd --system --gid 1000 rails && \
+                useradd rails --uid 1000 --gid 1000 \
+                --create-home --shell /bin/bash && \
+                chown -R rails:rails db log tmp
+            USER 1000:1000
+            EXPOSE 80
+            CMD ["./bin/thrust", "./bin/rails", "server"]
+            ```
+
+            Note:
+            - The first part is standard
+            - We setup a Ruby version to use
+            - Our source image
+            - And the working directory
+            ---
+            ## Setup
+
+            ```docker[4-9]
+            ARG RUBY_VERSION=3.4.1
+            FROM docker.io/library/ruby:$RUBY_VERSION-slim
+            WORKDIR /rails
+            ENV RAILS_ENV="production" \
+                BUNDLE_DEPLOYMENT="1" \
+                BUNDLE_PATH="/usr/local/bundle" \
+                BUNDLE_WITHOUT="development"
+            COPY . .
+            COPY Gemfile Gemfile.lock ./
+            RUN bundle install && \
+                bundle exec bootsnap precompile --gemfile
+            RUN groupadd --system --gid 1000 rails && \
+                useradd rails --uid 1000 --gid 1000 \
+                --create-home --shell /bin/bash && \
+                chown -R rails:rails db log tmp
+            USER 1000:1000
+            EXPOSE 80
+            CMD ["./bin/thrust", "./bin/rails", "server"]
+            ```
+
+            Note:
+            - Next up we set environment variables
+            - And copy over the app and its gemfile
+            ---
+            ## Setup
+
+            ```docker[10-16]
+            ARG RUBY_VERSION=3.4.1
+            FROM docker.io/library/ruby:$RUBY_VERSION-slim
+            WORKDIR /rails
+            ENV RAILS_ENV="production" \
+                BUNDLE_DEPLOYMENT="1" \
+                BUNDLE_PATH="/usr/local/bundle" \
+                BUNDLE_WITHOUT="development"
+            COPY . .
+            COPY Gemfile Gemfile.lock ./
+            RUN bundle install && \
+                bundle exec bootsnap precompile --gemfile
+            RUN groupadd --system --gid 1000 rails && \
+                useradd rails --uid 1000 --gid 1000 \
+                --create-home --shell /bin/bash && \
+                chown -R rails:rails db log tmp
+            USER 1000:1000
+            EXPOSE 80
+            CMD ["./bin/thrust", "./bin/rails", "server"]
+            ```
+
+            Note:
+            - Then we install dependencies
+            - Setup bootsnap, which make it boot faster
+            - and then fix some permissions
+            ---
+            ## Setup
+
+            ```docker[17-18]
+            ARG RUBY_VERSION=3.4.1
+            FROM docker.io/library/ruby:$RUBY_VERSION-slim
+            WORKDIR /rails
+            ENV RAILS_ENV="production" \
+                BUNDLE_DEPLOYMENT="1" \
+                BUNDLE_PATH="/usr/local/bundle" \
+                BUNDLE_WITHOUT="development"
+            COPY . .
+            COPY Gemfile Gemfile.lock ./
+            RUN bundle install && \
+                bundle exec bootsnap precompile --gemfile
+            RUN groupadd --system --gid 1000 rails && \
+                useradd rails --uid 1000 --gid 1000 \
+                --create-home --shell /bin/bash && \
+                chown -R rails:rails db log tmp
+            USER 1000:1000
+            EXPOSE 80
+            CMD ["./bin/thrust", "./bin/rails", "server"]
+            ```
+
+            Note:
+            - Finally we set the entrypoint and the port
+            - The entrypoint will migrate the DB
+            - And run the server with thrust
+            ---
+            ## Setup
+
+            ```sh
+            > bundle add thruster
+            Fetching gem metadata from https://rubygems.org/..........
+            Resolving dependencies...
+            Fetching thruster 0.1.12 (x86_64-linux)
+            Installing thruster 0.1.12 (x86_64-linux)
+            ```
+            ```sh
+            > bundle binstubs thruster
+            ```
+
+            Note:
+            - Next up, we need to add thruster
+            - This is a thin proxy that runs in front of your app server
+            - You don't need it, but it will make your app faster
+            - It provides simple caching, automatic TLS, and more
+            ---
+            ## Setup
+
+            ```rb
+            # config/routes.rb
+
+            Rails.application.routes.draw do
+              get "up", to: "rails/health#show",
+                  as: :rails_health_check
+              # ...
+            end
+            ```
+
+            Note:
+            - Then comes the route
+            - Kamal needs to a way to talk to your app
+            - This health check route lets Kamal know when the app is ready
+            - Without this, Kamal can't verify deploy success
+            ---
+            ## Setup
+
+            ```yml[]
+            service: blog
+            image: gmcgibbon/blog
+            servers:
+              web:
+                - 1.234.56.78
+            proxy:
+              ssl: true
+              host: gannon.io
+            registry:
+              username: gmcgibbon
+              password:
+                - KAMAL_REGISTRY_PASSWORD
+            builder:
+              arch: amd64
+            env:
+              clear:
+                RAILS_SERVE_STATIC_FILES: 1
+              secret:
+                - RAILS_MASTER_KEY
+            asset_path: /rails/public/assets
+            ```
+
+            Note:
+            - Finally, we have the config file
+            - This tells kamal how to deploy your app
+            - Let's step through it
+            ---
+
+            ## Setup
+
+            ```yml[1-5]
+            service: blog
+            image: gmcgibbon/blog
+            servers:
+              web:
+                - 1.234.56.78
+            proxy:
+              ssl: true
+              host: gannon.io
+            registry:
+              username: gmcgibbon
+              password:
+                - KAMAL_REGISTRY_PASSWORD
+            builder:
+              arch: amd64
+            env:
+              clear:
+                RAILS_SERVE_STATIC_FILES: 1
+              secret:
+                - RAILS_MASTER_KEY
+            asset_path: /rails/public/assets
+            ```
+
+            Note:
+            - First we speciy a service name
+            - The name of the docker image
+            - Your servers organized by worker type
+            ---
+            ## Setup
+
+            ```yml[6-14]
+            service: blog
+            image: gmcgibbon/blog
+            servers:
+              web:
+                - 1.234.56.78
+            proxy:
+              ssl: true
+              host: gannon.io
+            registry:
+              username: gmcgibbon
+              password:
+                - KAMAL_REGISTRY_PASSWORD
+            builder:
+              arch: amd64
+            env:
+              clear:
+                RAILS_SERVE_STATIC_FILES: 1
+              secret:
+                - RAILS_MASTER_KEY
+            asset_path: /rails/public/assets
+            ```
+
+            Note:
+            - Next we're setting proxy info, turning on HTTPS and our domain
+            - The registry username and password to use
+            - Along with the target arch to build the image for
+            ---
+            ## Setup
+
+            ```yml[15-20]
+            service: blog
+            image: gmcgibbon/blog
+            servers:
+              web:
+                - 1.234.56.78
+            proxy:
+              ssl: true
+              host: gannon.io
+            registry:
+              username: gmcgibbon
+            password:
+              - KAMAL_REGISTRY_PASSWORD
+            builder:
+              arch: amd64
+            env:
+              clear:
+                RAILS_SERVE_STATIC_FILES: 1
+              secret:
+                - RAILS_MASTER_KEY
+            asset_path: /rails/public/assets
+            ```
+
+            Note:
+            - Next there's environment configuration
+            - Static files can be served on a VPS
+            - We also need to specify a master key secret to decrypt credentials
+            - We also set the path to assets because are serving assets this way
+            ---
+            ## Setup
+
+            ```yml[15-20]
+            service: blog
+            image: gmcgibbon/blog
+            servers:
+              web:
+                - 1.234.56.78
+            proxy:
+              ssl: true
+              host: gannon.io
+            registry:
+              username: gmcgibbon
+            password:
+              - KAMAL_REGISTRY_PASSWORD
+            builder:
+              arch: amd64
+            env:
+              clear:
+                RAILS_SERVE_STATIC_FILES: 1
+              secret:
+                - RAILS_MASTER_KEY
+            asset_path: /rails/public/assets
+            ```
+
+            Note:
+            - It is worth noting that my app has no dependent services
+            - But you can add mysql or redis here too
+            - Under an accessories key
+            ---
+            ## Setup
+
+            ```sh
+            > git add .
+            > git commit -m "Add kamal"
+            > git push
+            ```
+
+            Note:
+            - That's it for configuration
+            - Commit that and you're done
+            - And then we can finally setup kamal
+            ---
+            ## Setup
+
+            ```sh
+            > sudo systemctl start docker
+            > export KAMAL_REGISTRY_PASSWORD=dckr_pat_xxxxxxxx
+            ```
+
+            Note:
+            - Kamal needs to use docker, so make sure its started
+            - You can also just start docker desktop
+            - It needs to login too, so feed it an access token
+            ---
+            ## Setup
+
+            ```sh
+            > kamal setup
+            Running /usr/bin/env mkdir -p .kamal on x.x.x.x
+            Finished in 1.585 seconds with exit status 0 (successful).
+            Acquiring the deploy lock...
+            Ensure Docker is installed...
+            Running docker -v on x.x.x.x
+            Finished in 0.342 seconds with exit status 0 (successful).
+            Log into image registry...
+            Running docker --version && docker buildx version as gannon@localhost
+            Finished in 0.248 seconds with exit status 0 (successful).
+            Running docker login -u [REDACTED] -p [REDACTED] as gannon@localhost
+            Finished in 0.665 seconds with exit status 0 (successful).
+            Running docker login -u [REDACTED] -p [REDACTED] on x.x.x.x
+            Finished in 0.296 seconds with exit status 0 (successful).
+            Build and push app image...
+            Running docker --version && docker buildx version as gannon@localhost
+            ```
+
+            Note:
+            - This prepares the server for hosting
+            - Installs docker, sets up the web server
+            - That sort of thing
+            ---
+            ## Setup
+
+            ```sh
+            > kamal setup
+            Running /usr/bin/env mkdir -p .kamal on x.x.x.x
+            Finished in 1.585 seconds with exit status 0 (successful).
+            Acquiring the deploy lock...
+            Ensure Docker is installed...
+            Running docker -v on x.x.x.x
+            Finished in 0.342 seconds with exit status 0 (successful).
+            Log into image registry...
+            Running docker --version && docker buildx version as gannon@localhost
+            Finished in 0.248 seconds with exit status 0 (successful).
+            Running docker login -u [REDACTED] -p [REDACTED] as gannon@localhost
+            Finished in 0.665 seconds with exit status 0 (successful).
+            Running docker login -u [REDACTED] -p [REDACTED] on x.x.x.x
+            Finished in 0.296 seconds with exit status 0 (successful).
+            Build and push app image...
+            Running docker --version && docker buildx version as gannon@localhost
+            ```
+
+            Note:
+            - It also does the first deploy
+            - So your project will be deployed post setup
+            - If everything is right, you'll see your app
+            ---
+            ## Setup
+
+            ```sh
+            > kamal deploy
+            Log into image registry...
+            Running docker --version && docker buildx version as gannon@localhost
+            Finished in 0.248 seconds with exit status 0 (successful).
+            Running docker login -u [REDACTED] -p [REDACTED] as gannon@localhost
+            Finished in 0.665 seconds with exit status 0 (successful).
+            Running docker login -u [REDACTED] -p [REDACTED] on x.x.x.x
+            Finished in 0.296 seconds with exit status 0 (successful).
+            Build and push app image...
+            Running docker --version && docker buildx version as gannon@localhost
+            ```
+
+            Note:
+            - For future deploys, run kamal deploy
+            - It will just do the deployment part
+            ---
+            ## Demo
+
+            Note:
+            - That might not look easy
+            - Let's look at Kamal in action
+            - And try to deploy my app to a brand new server
+            ---
+            ## Thanks!
+          </textarea>
+        </section>
+      </div>
+    </div>
+    <script type="module">
+      import Reveal from 'reveal.js'
+      import Markdown from 'reveal.js-markdown-plugin'
+      import Mermaid from 'reveal.js-mermaid-plugin'
+      import LaserPointer from 'reveal.js-laser-pointer-plugin'
+      import Highlight from 'reveal.js-highlight-plugin'
+      import Notes from 'reveal.js-notes-plugin'
+
+      const deck = new Reveal({
+        plugins: [
+          Markdown,
+          Mermaid,
+          Highlight,
+          LaserPointer,
+          Notes,
+        ]
+      })
+      deck.initialize({
+        autoPlayMedia: true,
+        transition: 'none',
+        center: false,
+        controls: false,
+        hash: true,
+        controlsBackArrows: 'hidden',
+        mermaid: {
+          theme: 'dark',
+          themeVariables: {
+            signalTextColor: '',
+          },
+        },
+      })
+    </script>
+  </body>
+</html>
